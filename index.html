@@ -7,12 +7,26 @@
   <style>
     body {
       margin: 0;
-      min-height: 100vh;
+      min-height: 55vh;
       display: grid;
       place-items: center;
-      background: aliceblue;
+      background-image: url('IMG_5400.jpg');
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      /* This prevents any off-screen elements from generating scrollbars */
+      overflow: hidden;
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      color: #111;
+      color: #ffffff;
+    }
+    #title {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 1.2rem;
+    }
+    #version {
+      display: inline-block;
     }
     #tumbleweed {
       position: absolute;
@@ -28,43 +42,41 @@
   </style>
 </head>
 <body>
-  <div>memelian4.site 3.0</div>
+  <div id="title">memelian4.site <div id="version">4</div></div>
   <div id="tumbleweed"></div>
   <script>
-  const tumbleweed = document.getElementById('tumbleweed');
-  let position = 0;
+    const tumbleweed = document.getElementById('tumbleweed');
+    let position = 0;
 
-  // Tuning Knobs
-  const speed = 4;         // Horizontal pixels per frame
-  const arcWidth = 250;    // How wide each bounce is (increase this to make it wider!)
-  const maxHeight = 100;   // How high each bounce goes
+    // Tuning Knobs. just like door knobs.
+    let speed = 4;         
+    const arcWidth = 250;    
+    const maxHeight = 100;   
+    let iteration = 0;
+      
+    function animateTumbleweed() {
+      speed += iteration * 0.000001; // Gradually increase speed over time
+      position += speed;
+      if (position > window.innerWidth) {
+        position = -tumbleweed.offsetWidth; 
+      }
+      tumbleweed.style.left = position + 'px';
 
-  function animateTumbleweed() {
-    // 1. Progress horizontal position
-    position += speed;
-    if (position > window.innerWidth) {
-      position = -tumbleweed.offsetWidth; // Reset to loop
+      
+      const cycleX = position % arcWidth;
+      
+      const normalizedX = (cycleX / arcWidth) * 2 - 1;
+
+      
+      const bounce = maxHeight * (1 - (normalizedX * normalizedX));
+      
+      tumbleweed.style.bottom = bounce + 'px';
+      document.getElementById('version').textContent = speed.toFixed(2); // Display speed in the version div
+      requestAnimationFrame(animateTumbleweed);
+      iteration++;
     }
-    tumbleweed.style.left = position + 'px';
 
-    // 2. Calculate the parabolic bounce
-    // Find the horizontal progress inside the current bounce cycle (0 to arcWidth)
-    const cycleX = position % arcWidth;
-
-    // Normalize cycleX to a range between -1 and 1
-    const normalizedX = (cycleX / arcWidth) * 2 - 1;
-
-    // Apply the parabola formula: y = 1 - x^2
-    // When normalizedX is -1 or 1 (the edges), bounce is 0. 
-    // When normalizedX is 0 (the middle), bounce is maxHeight.
-    const bounce = maxHeight * (1 - (normalizedX * normalizedX));
-    
-    tumbleweed.style.bottom = bounce + 'px';
-
-    requestAnimationFrame(animateTumbleweed);
-  }
-
-  animateTumbleweed();
+    animateTumbleweed();
   </script>
 </body>
 </html>
