@@ -14,9 +14,57 @@
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       color: #111;
     }
+    #tumbleweed {
+      position: absolute;
+      bottom: 0px;
+      left: 0;
+      width: 180px;
+      height: 180px; /* smaller size with squished aspect ratio */
+      background-image: url('tumbleweed.gif');
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      animation: tumbleweed 10s infinite;
+    }
   </style>
 </head>
 <body>
   <div>memelian4.site 3.0</div>
+  <div id="tumbleweed"></div>
+  <script>
+  const tumbleweed = document.getElementById('tumbleweed');
+  let position = 0;
+
+  // Tuning Knobs
+  const speed = 4;         // Horizontal pixels per frame
+  const arcWidth = 250;    // How wide each bounce is (increase this to make it wider!)
+  const maxHeight = 100;   // How high each bounce goes
+
+  function animateTumbleweed() {
+    // 1. Progress horizontal position
+    position += speed;
+    if (position > window.innerWidth) {
+      position = -tumbleweed.offsetWidth; // Reset to loop
+    }
+    tumbleweed.style.left = position + 'px';
+
+    // 2. Calculate the parabolic bounce
+    // Find the horizontal progress inside the current bounce cycle (0 to arcWidth)
+    const cycleX = position % arcWidth;
+
+    // Normalize cycleX to a range between -1 and 1
+    const normalizedX = (cycleX / arcWidth) * 2 - 1;
+
+    // Apply the parabola formula: y = 1 - x^2
+    // When normalizedX is -1 or 1 (the edges), bounce is 0. 
+    // When normalizedX is 0 (the middle), bounce is maxHeight.
+    const bounce = maxHeight * (1 - (normalizedX * normalizedX));
+    
+    tumbleweed.style.bottom = bounce + 'px';
+
+    requestAnimationFrame(animateTumbleweed);
+  }
+
+  animateTumbleweed();
+  </script>
 </body>
 </html>
